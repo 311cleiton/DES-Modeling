@@ -7,7 +7,6 @@ print("\n")
 ### PACKAGES ###
 ################
 using Clapeyron
-# using BlackBoxOptim
 using Dierckx
 using CSV
 using DataFrames
@@ -20,14 +19,6 @@ import PyPlot
 #############
 ### INPUT ###
 #############
-# species_1 = "C2MIMTF2N" # 4C
-# fig_title = "a) [C₂mim][Tf₂N]"
-# species_1 = "C4MIMTF2N" # 4C
-# fig_title = "b) [C₄mim][Tf₂N]"
-# species_1 = "C6MIMTF2N" # 4C
-# fig_title = "c) [C₆mim][Tf₂N]"
-# species_1 = "C8MIMTF2N" # 4C
-# fig_title = "d) [C₈mim][Tf₂N]"
 species_des = [
 "TPPPBr_Ph_6"   # 1
 "TPPPBr_Ph_4"   # 2
@@ -45,14 +36,11 @@ species_evaluated = species_des[11]
 species_1 = species_evaluated
 fig_title_1 = species_1
 
-# species_1 = "perfluorohexane" # TEST
-
 ################
 ### MODELING ###
 ################
 # DEFINE MODEL
 model_1 = SAFTVRMie([species_1])
-# model_1 = PCSAFT([species_1])
 
 # MODEL INPUTS
 fixed_T = 298.15 # temperature [K]
@@ -77,12 +65,6 @@ spl_hs = Spline1D(input_T,output_a_hs,k=2)
 spl_disp = Spline1D(input_T,output_a_disp,k=2)
 spl_chain = Spline1D(input_T,output_a_chain,k=2)
 spl_assoc = Spline1D(input_T,output_a_assoc,k=2)
-
-# a_res = spl_res(input_T)
-# a_hs = spl_hs(input_T)
-# a_disp = spl_disp(input_T)
-# a_chain = spl_chain(input_T)
-# a_assoc = spl_assoc(input_T)
 
 d_res = derivative(spl_res,input_T)
 d_hs = derivative(spl_hs,input_T)
@@ -123,24 +105,12 @@ PyPlot.plot(input_T,d_disp,label=label_disp,linestyle="dashed",marker="",color="
 PyPlot.plot(input_T,d_chain,label=label_chain,linestyle="dashdot",marker="",color="forestgreen")
 PyPlot.plot(input_T,d_assoc,label=label_assoc,linestyle=(5, (10, 3)),marker="",color="orange")
 #
-# PyPlot.legend(loc="best",frameon=true,fontsize=13,ncol=3)
 PyPlot.legend(loc=6,frameon=true,fontsize=13,ncol=2)
-# PyPlot.legend(loc=(0.05,0.30),frameon=true,fontsize=13,ncol=2)
 PyPlot.xlabel("Temperature (K)",fontsize=16)
 PyPlot.ylabel("∂a/∂T (K⁻¹)",fontsize=16)
 PyPlot.xticks(fontsize=13)
 PyPlot.yticks(fontsize=13)
-# xlim_min = minimum(input_T)
-# xlim_max = maximum(input_T)
-# PyPlot.xlim([xlim_min,xlim_max])
-# ylim_min = -0.05
-# ylim_max = 0.35
-# PyPlot.ylim([ylim_min,ylim_max])
-# PyPlot.text(0.9*xlim_max,0.85*ylim_max, fig_title, fontsize=19, style="normal",font="times new roman")
 PyPlot.title(fig_title_1,fontsize=19)
-# species_DESfig_1 = "C:/Users/clsobe/My Drive/DTU/PROJECTS/BS5/FIGURES_1/dadT_1/dadT_"*species_1*".jpg"
-species_DESfig_1 = "C:/Users/clsobe/My Drive/DTU/PROJECTS/BS5/FIGURES_1/dadT_2/dadT_"*species_1*".jpg"
-PyPlot.savefig(species_DESfig_1, bbox_inches="tight")
 display(PyPlot.gcf())
 
 #######################
@@ -164,22 +134,10 @@ PyPlot.plot(input_T,d2_disp*1000,label=label_disp,linestyle="dashed",marker="",c
 PyPlot.plot(input_T,d2_chain*1000,label=label_chain,linestyle="dashdot",marker="",color="forestgreen")
 PyPlot.plot(input_T,d2_assoc*1000,label=label_assoc,linestyle=(5, (10, 3)),marker="",color="orange")
 #
-# PyPlot.legend(loc="best",frameon=true,fontsize=13,ncol=3)
 PyPlot.legend(loc=6,frameon=true,fontsize=13,ncol=2)
-# PyPlot.legend(loc=(0.05,0.39),frameon=true,fontsize=13,ncol=2)
 PyPlot.xlabel("Temperature (K)",fontsize=16)
 PyPlot.ylabel("∂²a/∂T² (1∙10³ K⁻²)",fontsize=16)
 PyPlot.xticks(fontsize=13)
 PyPlot.yticks(fontsize=13)
-# xlim_min = minimum(input_T)
-# xlim_max = maximum(input_T)
-# PyPlot.xlim([xlim_min,xlim_max])
-# ylim_min = -2.5
-# ylim_max = 0.5
-# PyPlot.ylim([ylim_min,ylim_max])
-# PyPlot.text(0.9*xlim_max,0.9*ylim_min, fig_title, fontsize=19, style="normal",font="times new roman")
 PyPlot.title(fig_title_1,fontsize=19)
-# species_DESfig_2 = "C:/Users/clsobe/My Drive/DTU/PROJECTS/BS5/FIGURES_1/dadT_1/d2adT2_"*species_1*".jpg"
-species_DESfig_2 = "C:/Users/clsobe/My Drive/DTU/PROJECTS/BS5/FIGURES_1/dadT_2/d2adT2_"*species_1*".jpg"
-PyPlot.savefig(species_DESfig_2, bbox_inches="tight")
 display(PyPlot.gcf())
