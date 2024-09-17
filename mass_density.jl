@@ -7,7 +7,6 @@ print("\n")
 ### PACKAGES ###
 ################
 using Clapeyron
-# using BlackBoxOptim
 using CSV
 using DataFrames
 using Statistics
@@ -36,7 +35,6 @@ cute_species = [
     "[TOA][Br]:CA (1:2)"
     "[TOA][Cl]:CA (1:1.5)"
 ]
-# fig_title = species_des
 
 ################
 ### MODELING ###
@@ -45,11 +43,11 @@ username = ENV["USERNAME"]
 # exp_path = ["C:/Users/"*username*"/My Drive/PROJECTS/DTU/BS5/CSV/RHO/TOACl_CA_1.5.csv"]
 # exp_path = ["C:/Users/clsobe/My Drive/DTU/PROJECTS/BS5/CSV/RHO/TOACl_CA_1.5.csv"]
 exp_path = [] 
-exp_data = [] # 1 - rho [kg/m³] | 2 – pressure [MPa] | 3 – temperature [K] 
+exp_data = [] # column 1 - rho [kg/m³] | 2 – pressure [MPa] | 3 – temperature [K] 
 data_rho = [] # specific density [kg/m³]
 # data_P = [] # pressure [MPa]
-model_P = 0.1*1E6 # Pa
-data_T = [] # K
+model_P = 0.1*1E6 # [Pa]
+data_T = [] # [K]
 model_T = collect(280:10:330) # temperature [K]
 model_DES = []
 model_rho = [] # specific density [kg/m³]
@@ -75,10 +73,8 @@ end
 PyPlot.clf()
 plot_font = "times new roman"
 PyPlot.rc("font", family=plot_font)
-# PyPlot.figure(figsize=(6,6), dpi = 311)
 PyPlot.figure(dpi=311)
 # EXPERIMENTAL
-# PyPlot.plot(data_T,data_rho,label=species_des,linestyle="",marker="o",color="black")
 PyPlot.plot(data_T[1],data_rho[1],label=cute_species[1],linestyle="",marker="o",color="black")
 PyPlot.plot(data_T[2],data_rho[2],label=cute_species[2],linestyle="",marker="s",color="royalblue")
 PyPlot.plot(data_T[3],data_rho[3],label=cute_species[3],linestyle="",marker="^",color="forestgreen")
@@ -103,13 +99,9 @@ xlim_min = 280
 xlim_max = 330
 PyPlot.xticks(collect(xlim_min:10:xlim_max))
 PyPlot.xlim([xlim_min,xlim_max])
-# ylim_min = 860
-# ylim_max = 960
 ylim_min = 850
 ylim_max = 1000
-# PyPlot.yticks(collect(ylim_min:20:ylim_max))
 PyPlot.yticks(collect(ylim_min:25:ylim_max))
 PyPlot.ylim([ylim_min,ylim_max])
-# PyPlot.text(property_2B[150],700, "298.15 K, 313.15 K, 323.15 K, 333.15 K, 343.15 K, 353.15 K, 363.16 K", fontsize=14)
 #
 display(PyPlot.gcf())
