@@ -13,16 +13,16 @@ using BlackBoxOptim
 using Statistics
 using Printf
 
-# GENERATE MODEL YOU WISH TO PARAMETRIZE
+# GENERATE MODEL
 species = "TOABr_CA_2"
 model = SAFTVRMie([species]);
 
 # ESTIMATION PARAMETERS
-segmentlower = 4.5543
-segmentupper = 4.5543
+segmentlower = 3.5
+segmentupper = 5.5
 segmentguess = median([segmentlower,segmentupper])
-sigmalower = 4.6441
-sigmaupper = 4.7691
+sigmalower = 3.5
+sigmaupper = 5.5
 sigmaguess = median([sigmalower,sigmaupper])
 epsilonlower = 400.00
 epsilonupper = 400.00
@@ -65,13 +65,13 @@ toestimate = [
     # ),
 ];
 
-# PROPERTY FUNCTION YOU WISH TO ESTIMATE
+# OPTIMIZATION PROPERTIES
 function mass_rho(model::EoSModel,p,T)
-    md = mass_density(model,p*1.0E6,T)
-    return md[1]
+    md = mass_density(model,p*1.0E6,T) # p = [Pa]; T = [K]
+    return md[1] # md = [kg/m³]
 end
 
-# ESTIMATOR FUNCTION
+# ESTIMATOR
 estimator,objective,initial,upper,lower = Estimation(model,toestimate,[full_file_path_rho]);
 
 # OPTMIZATION
