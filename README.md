@@ -1,4 +1,3 @@
-# DES-SAFTVRMie
 # Julia packages version
 name = "Clapeyron"
 uuid = "7c7805af-46cc-48c9-995b-ed0ed2dc909a"
