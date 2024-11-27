@@ -1,6 +1,6 @@
 print(@__FILE__)
 print("\n")
-# Reduced Helmholtz energy da/dV (at constant T,N) (plot with who)
+# Calculation of da/dV with rho [correct]
 # https://clapeyronthermo.github.io/Clapeyron.jl/dev/properties/basic/
 # https://clapeyronthermo.github.io/Clapeyron.jl/dev/properties/bulk/
 
@@ -13,6 +13,10 @@ using LaTeXStrings
 using PyCall
 import PyPlot
 using Statistics
+using Printf
+using Dates
+print(now())
+print("\n")
 
 #############
 ### INPUT ###
@@ -20,27 +24,30 @@ using Statistics
 species_des = [
 "TPPPBr_Ph_6"   # 1
 "TPPPBr_Ph_4"   # 2
-"TPPPBr_TEG_16" # 3
-"TPPPBr_TEG_10" # 4
-"TPPPBr_TEG_4"  # 5
-"TBACl_CA_2"    # 6
-"MTACl_CA_2"    # 7
-"MTABr_CA_2"    # 8
-"TOACl_CA_2"    # 9
-"TOABr_CA_2"    # 10
-"TOACl_CA_1.5"  # 11
+"TPPPBr_TEG_10" # 3
+"TPPPBr_TEG_4"  # 4
+"TBACl_CA_2"    # 5
+"MTACl_CA_2"    # 6
+"MTABr_CA_2"    # 7
+"TOACl_CA_2"    # 8
+"TOABr_CA_2"    # 9
+"TOACl_CA_1.5"  # 10
 ]
-species_evaluated = species_des[6]
+species_evaluated = species_des[5]
 species_1 = species_evaluated
-fig_title_1 = "[TBA][Cl]:CA (1:2)"
 
 ################
 ### MODELING ###
 ################
-model_1 = SAFTVRMie([species_1])
+# model_1 = SAFTVRMie([species_1])
+model_1 = PCSAFT([species_1])
+print(model_1)
+print("\n")
 
 # Model inputs
-input_P = collect(0.1E+06:1.0E+06:150.1E+06) # pressure [Pa]
+# input_P = collect(0.1E+06:0.1E+06:1.5E+06) # pressure [Pa]
+# input_P = collect(0.0E+06:0.1E+06:2.0E+06) # pressure [Pa]
+input_P = collect(0.1E+06:1.0E+06:200.1E+06) # pressure [Pa]
 fixed_P = 0.1E+06 # pressure [Pa]
 input_T = collect(270:1:330) # temperature [K]
 fixed_T = 298.15 # temperature [K]
@@ -54,10 +61,18 @@ r_v = reverse(input_v)
 r_rho = reverse(model_rho)
 
 # a_res(model::EoSModel, V, T, z,args...) (Reduced residual Helmholtz free energy)
+# SAFTVRMie
+# output_a_res = Clapeyron.a_res.(model_1, r_v, fixed_T, fixed_z)
+# output_a_hs = Clapeyron.a_hs.(model_1, r_v, fixed_T, fixed_z)
+# output_a_disp = Clapeyron.a_disp.(model_1, r_v, fixed_T, fixed_z)
+# output_a_chain = Clapeyron.a_chain.(model_1, r_v, fixed_T, fixed_z)
+# output_a_assoc = Clapeyron.a_assoc.(model_1, r_v, fixed_T, fixed_z)
+# PCSAFT
 output_a_res = Clapeyron.a_res.(model_1, r_v, fixed_T, fixed_z)
 output_a_hs = Clapeyron.a_hs.(model_1, r_v, fixed_T, fixed_z)
+output_a_hc = Clapeyron.a_hc.(model_1, r_v, fixed_T, fixed_z)
+output_a_chain = output_a_hc - output_a_hs
 output_a_disp = Clapeyron.a_disp.(model_1, r_v, fixed_T, fixed_z)
-output_a_chain = Clapeyron.a_chain.(model_1, r_v, fixed_T, fixed_z)
 output_a_assoc = Clapeyron.a_assoc.(model_1, r_v, fixed_T, fixed_z)
 
 # https://github.com/kbarbary/Dierckx.jl
@@ -89,6 +104,14 @@ d_overall = abs_d_hs + abs_d_disp + abs_d_chain + abs_d_assoc
 
 abs_assoc_VS_overall = 100 .* (abs_d_assoc ./ d_overall)
 
+# https://docs.julialang.org/en/v1/stdlib/Statistics/
+avg_assoc = mean(abs_assoc_VS_overall) 
+print("avg_assoc [%]:")
+print("\n")
+@printf("%.4f",avg_assoc)
+print("\n")
+clipboard(avg_assoc)
+
 #############################
 ### PLOTTING da/dV vs rho ###
 #############################
@@ -109,16 +132,23 @@ PyPlot.plot(r_rho,d_chain,label=label_chain,linestyle="dashdot",marker="",color=
 PyPlot.plot(r_rho,d_assoc,label=label_assoc,linestyle=(5, (10, 3)),marker="",color="red")
 PyPlot.plot(r_rho,d_res,label=label_res,linestyle="solid",marker="",color="black")
 #
-PyPlot.legend(loc=(0.03,0.5),frameon=true,fontsize=16,ncol=3)
 PyPlot.xlabel("Mass density (kg/m³)",fontsize=16)
 PyPlot.ylabel("–∂a/∂V (1∙10⁻⁶ m⁻³)",fontsize=16)
 PyPlot.xticks(fontsize=13)
 PyPlot.yticks(fontsize=13)
-xlim_min = 930
+#
+PyPlot.legend(loc=(0.03,0.5),frameon=true,fontsize=16,ncol=3)
+xlim_min = 940
 xlim_max = 970
 PyPlot.xlim([xlim_min,xlim_max])
 ylim_min = -0.1
 ylim_max = 0.2
 PyPlot.ylim([ylim_min,ylim_max])
-PyPlot.text(1.001*xlim_min,0.90*ylim_max, fig_title_1, fontsize=19, style="normal",font="times new roman")
+# text_label = "a) SAFT-VR Mie (3B)"
+text_label = "b) PC-SAFT (2B)"
+x_title = 0.03*(xlim_max - xlim_min) + xlim_min
+y_title = 0.92*(ylim_max - ylim_min) + ylim_min
+PyPlot.text(x_title, y_title, text_label, fontsize=19)
+#
 display(PyPlot.gcf())
+#
