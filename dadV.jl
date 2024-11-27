@@ -1,6 +1,4 @@
-print(@__FILE__)
-print("\n")
-# Calculation of da/dV with rho [correct]
+# Calculation of da/dV (at constant T,N) with rho
 # https://clapeyronthermo.github.io/Clapeyron.jl/dev/properties/basic/
 # https://clapeyronthermo.github.io/Clapeyron.jl/dev/properties/bulk/
 
