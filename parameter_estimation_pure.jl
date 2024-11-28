@@ -1,11 +1,12 @@
 # ESTIMATION OF segment(m),sigma(σ),epsilon(ε)
+# https://github.com/ClapeyronThermo/Clapeyron.jl
 # https://clapeyronthermo.github.io/Clapeyron.jl/dev/api/estimation/
+# https://github.com/jmejia8/Metaheuristics.jl
 
 # STEP 1 - PACKAGES
-using Clapeyron # https://github.com/ClapeyronThermo/Clapeyron.jl
-using BlackBoxOptim # https://github.com/robertfeldt/BlackBoxOptim.jl
+using Clapeyron
+using Metaheuristics
 using Statistics
-using CSV
 using Printf
 using Dates
 print(now())
@@ -18,15 +19,15 @@ model_pure = PCSAFT([species]);
 print(model_pure)
 print("\n")
 
-# STEP 3 - PARAMETERS TO BE FITTED
+# STEP 3 - PARAMETERS TO FIT
 segmentlower = 3.0
 segmentupper = 5.0
 segmentguess = median([segmentlower,segmentupper])
 sigmalower = 3.0
 sigmaupper = 5.0
 sigmaguess = median([sigmalower,sigmaupper])
-epsilonlower = 200.0
-epsilonupper = 400.0
+epsilonlower = 200.00
+epsilonupper = 400.00
 epsilonguess = median([epsilonlower,epsilonupper])
 toestimate = [
     Dict(
@@ -51,30 +52,21 @@ toestimate = [
 ];
 
 # STEP 4 - PROPERTY USED FOR ESTIMATION
-test_md = []
 function mass_rho(model_pure::EoSModel,p,T)
-    md = mass_density(model_pure,p*1.0E6,T)
-    append!(test_md,md[1])
-    return md[1]
+    md = mass_density(model_pure,p*1.0E6,T) # p = [Pa]; T = [K]
+    return md[1] # md = [kg/m³]
 end
 
 # STEP 5 - ESTIMATOR
-    # EXPERIMENTAL PATH CSV
-    file_path_rho = "C:/Users/beral/My Drive/DTU/PROJECTS/BS5/CSV/PE/TBACl_CA_2.csv"
-estimator,objective,initial,upper,lower = Estimation(model_pure,toestimate,[file_path_rho]);
+path_rho = "C:/Users/beral/My Drive/DTU/PROJECTS/BS5/CSV/PE/TBACl_CA_2.csv"
+estimator,objective,initial,upper,lower = Estimation(model_pure,toestimate,[path_rho]);
 
-nparams = length(initial)
-bounds  = [(lower[i],upper[i]) for i in 1:nparams]
+local_method = ECA(;options=Options(iterations=50))
 
-result = BlackBoxOptim.bboptimize(objective; 
-        SearchRange = bounds, 
-        NumDimensions = nparams,
-        MaxSteps=10000,
-        PopulationSize = 1000,
-        # TraceMode=:silent
-        )
+print(local_method)
+print("\n")
 
-local_params = BlackBoxOptim.best_candidate(result); # !!!
+local_params, local_model = optimize(objective, estimator, local_method);
 
 # PRINT PARAMETERS
 print(species," [segment,sigma,epsilon] =")
