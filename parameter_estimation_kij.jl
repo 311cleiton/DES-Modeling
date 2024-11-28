@@ -52,7 +52,7 @@ eij = local_params[1]
 @printf("%.4f",eij)
 print("\n")
 
-# STEP 6 - kᵢⱼ CALCULATION
+# STEP 6 - kᵢⱼ CALCULATION (Lorentz-Berthelot combining rules)
 ei = local_model.params.epsilon[1,1]
 ej = local_model.params.epsilon[2,2]
 eiej = ei*ej
