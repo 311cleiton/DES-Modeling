@@ -52,13 +52,9 @@ eij = local_params[1]
 @printf("%.4f",eij)
 print("\n")
 
-# STEP 6 - kᵢⱼ CALCULATION (Lorentz-Berthelot combining rules)
-ei = local_model.params.epsilon[1,1]
-ej = local_model.params.epsilon[2,2]
-eiej = ei*ej
-sqrt_eiej = sqrt(eiej)
-eij_sqrt_eiej = eij / sqrt_eiej
-kij = 1 - eij_sqrt_eiej
+# STEP 6 - kᵢⱼ CALCULATION
+eij_0 = model_eij.params.epsilon[1,2]
+kij = 1 - eij / eij_0
 
 # PRINT kᵢⱼ
 print("### kᵢⱼ of ",species_1,"(i)–",species_2,"(j)")
