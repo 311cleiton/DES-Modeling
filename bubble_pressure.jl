@@ -1,6 +1,5 @@
 print(@__FILE__)
 print("\n")
-@time begin
 # BUBBLE PRESSURE PLOTTING
 
 ################
@@ -14,16 +13,12 @@ using Printf
 using PyCall
 import PyPlot
 
+@time begin
 #############
 ### INPUT ###
 #############
 species2 = "TOACl_CA_1.5"
 species1 = "CO2_Dufal_etal_2015" # Table 7 [DOI: 10.1080/00268976.2015.1029027]
-
-# cute_species = "[TPPP][Br]:Ph (1:6)"
-# fig_title = "a) [TPPP][Br]:Ph (1:6)"
-# cute_species = "[TPPP][Br]:Ph (1:4)"
-# fig_title = "b) [TPPP][Br]:Ph (1:4)"
 
 # cute_species = "[TBA][Cl]:CA (1:2)"
 # fig_title = "a) [TBA][Cl]:CA (1:2)"
