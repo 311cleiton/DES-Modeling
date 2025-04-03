@@ -1,4 +1,6 @@
-# Calculation of da/dV (at constant T,N) with rho
+print(@__FILE__)
+print("\n")
+# Calculation of da/dV with rho [correct]
 # https://clapeyronthermo.github.io/Clapeyron.jl/dev/properties/basic/
 # https://clapeyronthermo.github.io/Clapeyron.jl/dev/properties/bulk/
 
@@ -19,19 +21,19 @@ print("\n")
 #############
 ### INPUT ###
 #############
-species_des = [
-"TPPPBr_Ph_6"   # 1
-"TPPPBr_Ph_4"   # 2
-"TPPPBr_TEG_10" # 3
-"TPPPBr_TEG_4"  # 4
+species_all = [
+"ChCl_EG_2"     # 1
+"TPPPBr_Ph_6"   # 2
+"TBPBr_Ph_4"    # 3
+"TPPPBr_Ph_4"   # 4
 "TBACl_CA_2"    # 5
 "MTACl_CA_2"    # 6
 "MTABr_CA_2"    # 7
 "TOACl_CA_2"    # 8
 "TOABr_CA_2"    # 9
 "TOACl_CA_1.5"  # 10
-]
-species_evaluated = species_des[5]
+] # CSV Clapeyron database
+species_evaluated = species_all[5]
 species_1 = species_evaluated
 
 ################
@@ -43,11 +45,11 @@ print(model_1)
 print("\n")
 
 # Model inputs
-# input_P = collect(0.1E+06:0.1E+06:1.5E+06) # pressure [Pa]
+# input_P = collect(0.1E+06:0.1E+06:2.0E+06) # pressure [Pa]
 # input_P = collect(0.0E+06:0.1E+06:2.0E+06) # pressure [Pa]
 input_P = collect(0.1E+06:1.0E+06:200.1E+06) # pressure [Pa]
 fixed_P = 0.1E+06 # pressure [Pa]
-input_T = collect(270:1:330) # temperature [K]
+input_T = collect(288:1:344) # temperature [K]
 fixed_T = 298.15 # temperature [K]
 fixed_z = [1.0] # mole number [mol]
 
@@ -117,6 +119,7 @@ PyPlot.clf()
 plot_font = "times new roman"
 PyPlot.rc("font", family=plot_font)
 PyPlot.figure(dpi=311)
+PyPlot.figure(figsize=(6,5), dpi = 311)
 #
 label_res = "a"*L"\rm{_r}"*L"\rm{_e}"*L"\rm{_s}"
 label_hs = "a"*L"\rm{_H}"*L"\rm{_S}"
@@ -137,16 +140,21 @@ PyPlot.yticks(fontsize=13)
 #
 PyPlot.legend(loc=(0.03,0.5),frameon=true,fontsize=16,ncol=3)
 xlim_min = 940
-xlim_max = 970
+xlim_max = 960
+PyPlot.xticks(collect(940:5:960))
 PyPlot.xlim([xlim_min,xlim_max])
 ylim_min = -0.1
 ylim_max = 0.2
 PyPlot.ylim([ylim_min,ylim_max])
 # text_label = "a) SAFT-VR Mie (3B)"
-text_label = "b) PC-SAFT (2B)"
-x_title = 0.03*(xlim_max - xlim_min) + xlim_min
-y_title = 0.92*(ylim_max - ylim_min) + ylim_min
-PyPlot.text(x_title, y_title, text_label, fontsize=19)
+# text_label = "b) PC-SAFT (4C)"
+# x_title = 0.03*(xlim_max - xlim_min) + xlim_min
+# y_title = 0.92*(ylim_max - ylim_min) + ylim_min
+# PyPlot.text(x_title, y_title, text_label, fontsize=19)
+# fig_suptitle = species_1
+fig_suptitle = "(a) PC-SAFT 4C"
+# fig_suptitle = "(b) SAFT-VR Mie 4C"
+PyPlot.suptitle(fig_suptitle, y=-0.01, fontsize=16, fontweight="bold")  # Adjust y to control the position
 #
 display(PyPlot.gcf())
 #
